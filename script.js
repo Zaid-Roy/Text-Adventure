@@ -47,6 +47,13 @@ const locations = [
         "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
         "button functions": [restart, restart, restart],
         text: 'You die. ☠️'
+    },
+    ,
+    {
+        name: "win",
+        "button text": ["REPLAY?", "REPLAY?", "REPLAY?"],
+        "button functions": [restart, restart, restart],
+        text: "You defeat the dragon! YOU WIN THE GAME! 🎉"
     }
 
 ];
@@ -76,6 +83,23 @@ const weapons = [
     { name: 'claw hammer', power: 50 },
     { name: 'sword', power: 100 }
 ];
+const monsters = [
+    {
+      name: "slime",
+      level: 2,
+      health: 15
+    },
+    {
+      name: "fanged beast",
+      level: 8,
+      health: 60
+    },
+    {
+      name: "dragon",
+      level: 20,
+      health: 300
+    }
+  ]
 //Initialize buttons~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 button1.onclick = goStore;
@@ -127,7 +151,7 @@ function fightBeast() {
 }
 function fightDragon() {
     //console.log("Fighting dragon.");
-    fighting = 1;
+    fighting = 2;
     goFight();
 }
 function buyHealth() {
@@ -174,22 +198,27 @@ function sellWeapon() {
 function attack() {
     text.innerText = "The " + monsters[fighting].name + " attacks.";
     text.innerText += " You attack it with your " + weapons[currentWeapon].name + ".";
-    health -= monsters[fighting].level;
+    //health -= (monsters[fighting].level);
+    health -= getMonsterAttackValue(monsters[fighting].level);
     monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1;
     healthText.innerText = health;
     monsterHealthText.innerText = monsterHealth;
     if (health <= 0) {
         lose();
     } else if (monsterHealth <= 0) {
-        
-        if(fighting===2){
+        fighting === 2 ? winGame() : defeatMonster();
+        /* if(fighting===2){
             winGame();
         }else{
             defeatMonster();
-        }
+        } */
     }
 }
-
+function getMonsterAttackValue(level) {
+    const hit = (level * 5) - (Math.floor(Math.random() * xp));
+    console.log(hit);
+    return hit > 0 ? hit : 0;
+}
 function dodge() {
     text.innerText = "You dodge the attack from the " + monsters[fighting].name;
 }
@@ -214,4 +243,7 @@ function restart() {
     healthText.innerText = health;
     xpText.innerText = xp;
     goTown();
+}
+function winGame() {
+    update(locations[6]);
 }
